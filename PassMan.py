@@ -1,6 +1,7 @@
 from pysqlcipher3 import dbapi2 as sqlcipher
 from pyfiglet import Figlet
 from getpass import getpass
+import time
 import pandas as pd
 import qprompt
 
@@ -12,33 +13,32 @@ print(f.renderText('Pass Man'))
 print("Welcome to PassMan, please enter the master password to unlock.")
 password = getpass()
 pragma_input = "PRAGMA key='{}'".format(password)
-attempts = 0
+attempts = 1
 
-
-def inputPassword():
-    #attempts = 0
-    #password = input("Password: ")
+def testPassword():
+    time.sleep(2)
+    print("Wrong Password")
+    global attempts
+    print("Attempts: " + str(attempts))
+    #password = getpass()
     #pragma_input = "PRAGMA key='{}'".format(password)
-    global password
-    global pragma_input
     try:
-        db = sqlcipher.connect('testing.db')
-        cur = db.cursor()
-        #cur.execute('pragma key="p"')
+        password = getpass()
+        pragma_input = "PRAGMA key='{}'".format(password)
+        conn = sqlcipher.connect('testing.db')
+        cur = conn.cursor()
         cur.execute(pragma_input)
         cur.execute('SELECT * FROM passwords;')
-        db.commit()
-        #print(cur.fetchall())
+        conn.commit()
+        #cur.close()
+        #mainMenu()
     except:
-        global attempts
-        print("Wrong password")
         attempts = attempts + 1
-        print("Attempts: " + str(attempts))
         if attempts == 4:
-            print("Too many failed attempts! Exiting...")
+            print("Maximum attempts met. Exiting...")
             exit()
         else:
-            inputPassword()
+            testPassword()
 
 def searchByWebsite():
     global pragma_input
@@ -145,6 +145,13 @@ def mainMenu():
     menu.add("0", "Quit", exit)
     choice = menu.show()
 
-inputPassword()
+try:
+    conn = sqlcipher.connect('testing.db')
+    cur = conn.cursor()
+    cur.execute(pragma_input)
+    cur.execute("SELECT * FROM passwords")
+except:
+    testPassword()
+#inputPassword()
 print("Successfully logged in!")
 mainMenu()
