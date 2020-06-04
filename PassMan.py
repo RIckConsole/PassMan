@@ -1,6 +1,7 @@
 from pysqlcipher3 import dbapi2 as sqlcipher
 from pyfiglet import Figlet
 from getpass import getpass
+import pandas as pd
 import qprompt
 
 #BEGIN BANNER
@@ -47,7 +48,7 @@ def searchByWebsite():
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords WHERE WEBSITE LIKE '%{}%'".format(query))
     conn.commit()
-    print(cur.fetchall())
+    print(pd.read_sql_query("SELECT * FROM passwords WHERE WEBSITE LIKE '%{}%'".format(query), conn))
     cur.close()
     qprompt.pause()
     mainMenu()
@@ -60,7 +61,7 @@ def searchByUsername():
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords WHERE USERNAME LIKE '%{}%'".format(query))
     conn.commit()
-    print(cur.fetchall())
+    print(pd.read_sql_query("SELECT * FROM passwords WHERE USERNAME LIKE '%{}%'".format(query), conn))
     cur.close()
     qprompt.pause()
     mainMenu()
@@ -90,10 +91,28 @@ def addPass():
         mainMenu()
 
 def sortWebsite():
-    print("under development")
+    global pragma_input
+    conn = sqlcipher.connect('testing.db')
+    cur = conn.cursor()
+    cur.execute(pragma_input)
+    cur.execute("SELECT * FROM passwords ORDER BY WEBSITE")
+    conn.commit()
+    print(pd.read_sql_query("SELECT * FROM passwords ORDER BY WEBSITE", conn))
+    cur.close()
+    qprompt.pause()
+    mainMenu()
 
 def sortUsername():
-    print("under development")
+    global pragma_input
+    conn = sqlcipher.connect('testing.db')
+    cur = conn.cursor()
+    cur.execute(pragma_input)
+    cur.execute("SELECT * FROM passwords ORDER BY USERNAME")
+    conn.commit()
+    print(pd.read_sql_query("SELECT * FROM passwords ORDER BY USERNAME", conn))
+    cur.close()
+    qprompt.pause
+    mainMenu()
 
 def listAll():
     global pragma_input
@@ -102,7 +121,7 @@ def listAll():
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords")
     conn.commit()
-    print(cur.fetchall())
+    print(pd.read_sql_query("SELECT * FROM passwords", conn))
     cur.close()
     qprompt.pause()
     mainMenu()
