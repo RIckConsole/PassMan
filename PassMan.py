@@ -67,6 +67,7 @@ def searchByUsername():
     mainMenu()
 
 def addPass():
+    global password
     global pragma_input
     print("This will add a new set of credentials to the database.")
     website = qprompt.ask_str("Website")
@@ -89,6 +90,33 @@ def addPass():
         print("Credentials added successfully!")
         qprompt.pause()
         mainMenu()
+
+def delPass():
+    website = qprompt.ask_str("Website that credentials belong to")
+    username = qprompt.ask_str("Username of credential set")
+    global pragma_input
+    conn = sqlcipher.connect('testing.db')
+    cur = conn.cursor()
+    cur.execute(pragma_input)
+    cur.execute("SELECT * FROM passwords WHERE website = '{}' AND username = '{}'".format(website, username))
+    print("The following credentials will be removed (Permanent!)")
+    print(pd.read_sql_query("SELECT * FROM passwords WHERE website = '{}' AND username = '{}'".format(website, username), conn))
+    confirm = qprompt.ask_yesno(default="y")
+    if confirm == False:
+        print("Credential removal has been CANCELLED!")
+        print()
+        retry = qprompt.ask_yesno("Retry?", default="y")
+        if retry == True:
+            delPass()
+        else:
+            mainMenu()
+    else:
+        cur.execute("DELETE FROM passwords WHERE website = '{}' AND username = '{}'".format(website, username))
+        print("Credentials deleted successfully!")
+    conn.commit()
+    cur.close()
+    qprompt.pause()
+    mainMenu()
 
 def sortWebsite():
     global pragma_input
@@ -140,7 +168,7 @@ def mainMenu():
     menu.add("1", "Search by website", searchByWebsite)
     menu.add("2", "Search by username", searchByUsername)
     menu.add("3", "Add password", addPass)
-    menu.add("4", "Remove password")
+    menu.add("4", "Remove password", delPass)
     menu.add("5", "Sort By...", sortMenu)
     menu.add("0", "Quit", exit)
     choice = menu.show()
@@ -150,6 +178,8 @@ try:
     cur = conn.cursor()
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords")
+    conn.commit()
+    cur.close()
 except:
     testPassword()
 #inputPassword()
