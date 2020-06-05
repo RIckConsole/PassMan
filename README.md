@@ -8,10 +8,10 @@ PassMan is a simple password manager written in python. It uses sqlcipher to enc
 
 ## Usage
 
-Install the requirements
+Install the requirements (Requires Python 3 or above)
 
 ``` sh
-python3 -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Run the setup script to create your master password and the encrypted database.
@@ -19,6 +19,11 @@ Run the setup script to create your master password and the encrypted database.
 python setup.py
 ```
 Then run the PassMan.py script to login to your database.
+
+``` sh
+python PassMan.py
+```
+
 Gives 3 attempts for the correct login password or program will exit.
 The simple CLI menu will help you navigate and manage your credentials.
 
