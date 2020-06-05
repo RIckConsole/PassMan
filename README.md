@@ -2,7 +2,7 @@
 PassMan is a simple password manager written in python. It uses sqlcipher to encrypt the database. 
 
 ## Features
-- sqlcipher encrypted with a master password
+- Sqlcipher encrypted database with a master password
 - Intuitive CLI menu
 - Ability to search for, sort by, add/remove, and update/edit online credentials.
 
