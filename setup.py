@@ -28,7 +28,7 @@ createPassword()
 
 set_password = "PRAGMA key='{}'".format(password) #setup pragma_key value for DB encryption.
 
-conn = sqlcipher.connect('testing.db')
+conn = sqlcipher.connect('.passman.db')
 cur = conn.cursor()
 cur.execute(set_password) #sets password
 #Creates table in DB with an ID, website, username, and password.

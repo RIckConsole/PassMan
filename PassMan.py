@@ -27,7 +27,7 @@ def testPassword():
         global pragma_input
         password = getpass()
         pragma_input = "PRAGMA key='{}'".format(password)
-        conn = sqlcipher.connect('testing.db') #connect to database
+        conn = sqlcipher.connect('.passman.db') #connect to database
         cur = conn.cursor() #create cursor
         cur.execute(pragma_input) #execute password input into database
         cur.execute('SELECT * FROM passwords;') #select contents of table to test for password error
@@ -44,12 +44,11 @@ def testPassword():
 def searchByWebsite():
     global pragma_input
     query = qprompt.ask_str("Query") #get query input from user
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords WHERE WEBSITE LIKE '%{}%'".format(query)) #show all records where website matches user input
     conn.commit()
-    print(pd.read_sql_query("SELECT * FROM passwords WHERE WEBSITE LIKE '%{}%'".format(query), conn)) #display it in a pretty way
+    print(pd.read_sql_query("SELECT * FROM passwords WHERE WEBSITE LIKE '%{}%'".format(query), conn)) #select all records containing user input display it in a pretty way
     cur.close()
     qprompt.pause() #pause program and prompt user for continue
     mainMenu() #return to main menu
@@ -57,7 +56,7 @@ def searchByWebsite():
 def searchByUsername():
     global pragma_input
     query = qprompt.ask_str("Query")
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords WHERE USERNAME LIKE '%{}%'".format(query))
@@ -85,7 +84,7 @@ def addPass():
         else:
             addPass()
     else:
-        conn = sqlcipher.connect('testing.db')
+        conn = sqlcipher.connect('.passman.db')
         cur = conn.cursor()
         cur.execute(pragma_input)
         #add the users input into the database as a new set of credentials
@@ -98,7 +97,7 @@ def addPass():
 
 def updatePass():
     global pragma_input
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
     print(pd.read_sql_query("SELECT * FROM passwords", conn))  #display all passwords so user can easily see its ID
@@ -131,10 +130,9 @@ def updatePass():
 
 def delPass():
     global pragma_input
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords")
     print(pd.read_sql_query("SELECT * FROM passwords", conn))
     print("Select the ID of the credentials you wish to DELETE.")
     selection = qprompt.ask_int("ID")
@@ -157,22 +155,20 @@ def delPass():
 
 def sortWebsite():
     global pragma_input
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords ORDER BY WEBSITE") #orders all records by website
     conn.commit()
-    print(pd.read_sql_query("SELECT * FROM passwords ORDER BY WEBSITE", conn))
+    print(pd.read_sql_query("SELECT * FROM passwords ORDER BY WEBSITE", conn)) #orders all records by website
     cur.close()
     qprompt.pause()
     mainMenu()
 
 def sortUsername():
     global pragma_input
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords ORDER BY USERNAME")
     conn.commit()
     print(pd.read_sql_query("SELECT * FROM passwords ORDER BY USERNAME", conn))
     cur.close()
@@ -181,12 +177,11 @@ def sortUsername():
 
 def listAll():
     global pragma_input
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords") #lists all websites in ID order
     conn.commit()
-    print(pd.read_sql_query("SELECT * FROM passwords", conn))
+    print(pd.read_sql_query("SELECT * FROM passwords", conn)) # lists all websites in ID order
     cur.close()
     qprompt.pause()
     mainMenu()
@@ -212,7 +207,7 @@ def mainMenu(): #main menu for function types
     choice = menu.show()
 
 try:
-    conn = sqlcipher.connect('testing.db')
+    conn = sqlcipher.connect('.passman.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
     cur.execute("SELECT * FROM passwords")
