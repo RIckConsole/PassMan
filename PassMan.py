@@ -88,6 +88,7 @@ def addPass():
         conn = sqlcipher.connect('testing.db')
         cur = conn.cursor()
         cur.execute(pragma_input)
+        #add the users input into the database as a new set of credentials
         cur.execute("INSERT INTO passwords (WEBSITE, USERNAME, PASSWORD) values ('{}', '{}', '{}')".format(website, username, password))
         conn.commit()
         cur.close()
@@ -100,24 +101,24 @@ def updatePass():
     conn = sqlcipher.connect('testing.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    print(pd.read_sql_query("SELECT * FROM passwords", conn))
+    print(pd.read_sql_query("SELECT * FROM passwords", conn))  #display all passwords so user can easily see its ID
     print("Select the ID of the credentials you wish to EDIT")
     try:
-        ID = qprompt.ask_int("ID")
+        ID = qprompt.ask_int("ID") #ask user for ID of credential to edit
     except:
-        qprompt.error("ID NOT FOUND")
-        retry = qprompt.ask_yesno("Retry?")
+        qprompt.error("ID NOT FOUND") #error if ID is not found
+        retry = qprompt.ask_yesno("Retry?") #prompt user to retry or exit to main menu
         if retry == False:
             mainMenu()
         else:
             updatePass()
 
-    print("Credential set selected! What would you like to change?")
+    print("Credential set selected! What would you like to change?") #ask user what about the chosen set of credentials they would like to change
     qprompt.alert("HINT: Use '?' for a list of options")
     selection = qprompt.ask_str("Edit", valid=["website", "username", "password"])
     if selection.lower() == "website":
         new = qprompt.ask_str("Enter new value")
-        cur.execute("UPDATE passwords SET WEBSITE = '{}' WHERE ID = '{}'".format(new, ID))
+        cur.execute("UPDATE passwords SET WEBSITE = '{}' WHERE ID = '{}'".format(new, ID)) #updates record with new info
     elif selection.lower() == "username":
         new = qprompt.ask_str("Enter new value")
         cur.execute("UPDATE passwords SET USERNAME = '{}' WHERE ID = '{}'".format(new, ID))
@@ -159,7 +160,7 @@ def sortWebsite():
     conn = sqlcipher.connect('testing.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords ORDER BY WEBSITE")
+    cur.execute("SELECT * FROM passwords ORDER BY WEBSITE") #orders all records by website
     conn.commit()
     print(pd.read_sql_query("SELECT * FROM passwords ORDER BY WEBSITE", conn))
     cur.close()
@@ -183,23 +184,23 @@ def listAll():
     conn = sqlcipher.connect('testing.db')
     cur = conn.cursor()
     cur.execute(pragma_input)
-    cur.execute("SELECT * FROM passwords")
+    cur.execute("SELECT * FROM passwords") #lists all websites in ID order
     conn.commit()
     print(pd.read_sql_query("SELECT * FROM passwords", conn))
     cur.close()
     qprompt.pause()
     mainMenu()
 
-def sortMenu():
+def sortMenu(): #submenu for choosing sort type
     menu = qprompt.Menu()
-    menu.add("1", "Sort by website", sortWebsite)
+    menu.add("1", "Sort by website", sortWebsite) #params -> selection key, label, function to call once selected
     menu.add("2", "Sort by Username", sortUsername)
     menu.add("3", "List all passwords", listAll)
     menu.add("9", "Go back", mainMenu)
     menu.add("0", "Quit", exit)
     choice = menu.show(header="SORTING")
 
-def mainMenu():
+def mainMenu(): #main menu for function types
     menu = qprompt.Menu()
     menu.add("1", "Search by website", searchByWebsite)
     menu.add("2", "Search by username", searchByUsername)
